@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>L'association — ROAM</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;500;600;700;800&family=Barlow:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --rouge: #B31B34; --rouge-dark: #8C1427;
+    --bleu: #21264E; --bleu-mid: #23254d; --bleu-light: #84B5E2;
+    --vert: #C6E5E4; --white: #ffffff; --off-white: #F9F7F5;
+    --light-gray: #EFEFEF; --text-dark: #1A1A2E; --text-muted: #6B6B80;
+  }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Barlow', sans-serif; color: var(--text-dark); background: var(--white); overflow-x: hidden; }
+
+  /* NAV */
+  nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: var(--rouge); padding: 0 56px; height: 72px; display: flex; align-items: center; justify-content: space-between; }
+  .nav-logo { display: flex; align-items: center; text-decoration: none; }
+  .nav-links { display: flex; align-items: center; gap: 8px; list-style: none; height: 72px; }
+  .nav-links > li { position: relative; height: 100%; display: flex; align-items: center; }
+  .nav-links > li > a { color: rgba(255,255,255,0.88); text-decoration: none; font-size: 12px; font-weight: 400; letter-spacing: 0.8px; text-transform: uppercase; transition: color 0.2s; padding: 0 14px; height: 100%; display: flex; align-items: center; gap: 5px; white-space: nowrap; }
+  .nav-links > li > a:hover, .nav-links > li.has-dropdown:hover > a { color: var(--white); background: rgba(0,0,0,0.15); }
+  .nav-links > li.has-dropdown > a::after { content: ''; display: inline-block; width: 6px; height: 6px; border-right: 1.5px solid rgba(255,255,255,0.7); border-bottom: 1.5px solid rgba(255,255,255,0.7); transform: rotate(45deg) translateY(-2px); transition: transform 0.2s; }
+  .nav-links > li.has-dropdown:hover > a::after { transform: rotate(-135deg) translateY(-2px); }
+  .nav-dropdown { position: absolute; top: 72px; left: 0; background: var(--bleu); min-width: 220px; padding: 8px 0; list-style: none; opacity: 0; visibility: hidden; transform: translateY(-6px); transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s; box-shadow: 0 8px 32px rgba(0,0,0,0.25); z-index: 200; border-top: 2px solid var(--rouge); }
+  .nav-links > li:hover .nav-dropdown { opacity: 1; visibility: visible; transform: translateY(0); }
+  .nav-dropdown li a { display: flex; align-items: center; gap: 10px; padding: 11px 24px; color: rgba(255,255,255,0.75); text-decoration: none; font-size: 13px; font-weight: 300; transition: background 0.15s, color 0.15s; white-space: nowrap; }
+  .nav-dropdown li a::before { content: ''; display: block; width: 4px; height: 4px; border-radius: 50%; background: var(--rouge); flex-shrink: 0; opacity: 0; transition: opacity 0.15s; }
+  .nav-dropdown li a:hover { background: rgba(255,255,255,0.06); color: var(--white); }
+  .nav-dropdown li a:hover::before { opacity: 1; }
+  .nav-dropdown li + li { border-top: 1px solid rgba(255,255,255,0.06); }
+  .nav-cta { background: rgba(0,0,0,0.25); color: var(--white) !important; padding: 9px 22px !important; border-radius: 2px; font-weight: 500 !important; border: 1px solid rgba(255,255,255,0.35) !important; transition: background 0.2s !important; height: auto !important; }
+  .nav-cta:hover { background: rgba(0,0,0,0.4) !important; }
+
+  /* HERO */
+  .page-hero { margin-top: 72px; display: grid; grid-template-columns: 1fr 1fr; min-height: 480px; position: relative; overflow: hidden; }
+  .page-hero-content { background: var(--bleu); padding: 80px 56px 100px 80px; display: flex; flex-direction: column; justify-content: center; position: relative; z-index: 2; }
+  .page-hero-eyebrow { font-size: 11px; font-weight: 500; letter-spacing: 3px; text-transform: uppercase; color: var(--bleu-light); margin-bottom: 24px; display: flex; align-items: center; gap: 12px; }
+  .page-hero-eyebrow::before { content: ''; display: block; width: 32px; height: 1px; background: var(--bleu-light); }
+  .page-hero-title { font-family: 'Barlow Condensed', sans-serif; font-size: clamp(52px, 6vw, 88px); font-weight: 700; line-height: 1.0; color: var(--white); letter-spacing: -1px; margin-bottom: 28px; }
+  .page-hero-title em { font-style: normal; color: var(--rouge); }
+  .page-hero-desc { font-size: 17px; font-weight: 300; line-height: 1.75; color: rgba(255,255,255,0.7); max-width: 480px; }
+  .page-hero-visual { position: relative; overflow: hidden; }
+  .page-hero-img { position: absolute; inset: 0; background: url('visuel_gt.png') center/cover no-repeat; }
+  .breadcrumb { position: absolute; bottom: 0; left: 0; right: 0; background: var(--rouge); padding: 14px 80px; display: flex; align-items: center; gap: 8px; font-size: 12px; z-index: 3; }
+  .breadcrumb a { color: rgba(255,255,255,0.75); text-decoration: none; }
+  .breadcrumb span { color: rgba(255,255,255,0.4); }
+  .breadcrumb strong { color: var(--white); font-weight: 500; }
+
+  /* SHARED */
+  .section-label { font-size: 11px; font-weight: 500; letter-spacing: 3px; text-transform: uppercase; color: var(--rouge); margin-bottom: 20px; display: flex; align-items: center; gap: 12px; }
+  .section-label::before { content: ''; display: block; width: 24px; height: 1px; background: var(--rouge); }
+  .section-title { font-family: 'Barlow Condensed', sans-serif; font-size: clamp(34px, 3vw, 52px); font-weight: 700; line-height: 1.05; color: var(--bleu); letter-spacing: -0.5px; margin-bottom: 28px; }
+
+  /* INTRO + CHIFFRES */
+  .intro-stats { background: var(--white); display: grid; grid-template-columns: 1fr 1fr; }
+  .intro-text { padding: 80px 72px 80px 80px; border-right: 1px solid var(--light-gray); }
+  .intro-body { font-size: 16px; font-weight: 300; line-height: 1.85; color: var(--text-dark); margin-bottom: 20px; }
+  .intro-body strong { font-weight: 600; color: var(--bleu); }
+  .intro-chiffres { padding: 80px 80px 80px 72px; display: flex; flex-direction: column; gap: 40px; justify-content: center; }
+  .chiffre-item { display: grid; grid-template-columns: 110px 1fr; gap: 24px; align-items: center; }
+  .chiffre-item + .chiffre-item { border-top: 1px solid var(--light-gray); padding-top: 40px; }
+  .chiffre-num { font-family: 'Barlow Condensed', sans-serif; font-size: 52px; font-weight: 800; line-height: 1; color: #84B5E2; letter-spacing: -2px; }
+  .chiffre-label { font-size: 15px; font-weight: 300; line-height: 1.6; color: var(--text-muted); }
+  .chiffre-label strong { display: block; font-weight: 600; color: var(--bleu); font-size: 16px; margin-bottom: 4px; }
+
+  /* MARCHE */
+  .marche { background: var(--bleu); padding: 80px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2px; }
+  .marche-card { background: rgba(255,255,255,0.06); padding: 48px 44px; border: 1px solid rgba(255,255,255,0.06); transition: background 0.2s; }
+  .marche-card:hover { background: rgba(255,255,255,0.1); }
+  .marche-pct { font-family: 'Barlow Condensed', sans-serif; font-size: 64px; font-weight: 800; color: var(--rouge); line-height: 1; margin-bottom: 16px; letter-spacing: -2px; }
+  .marche-title { font-family: 'Barlow Condensed', sans-serif; font-size: 22px; font-weight: 700; color: var(--white); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 14px; }
+  .marche-body { font-size: 14px; font-weight: 300; line-height: 1.75; color: rgba(255,255,255,0.6); }
+
+  /* TICKER */
+  .valeurs-strip { background: #C6E5E4; padding: 28px 0; overflow: hidden; }
+  .valeurs-ticker { display: flex; gap: 60px; white-space: nowrap; animation: ticker 22s linear infinite; }
+  @keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+  .valeur-item { font-family: 'Barlow Condensed', sans-serif; font-size: 17px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: rgba(33,38,78,0.7); display: flex; align-items: center; gap: 60px; flex-shrink: 0; }
+  .valeur-item::after { content: '—'; color: rgba(33,38,78,0.3); }
+
+  /* MISSIONS 3 colonnes */
+  .missions { background: var(--off-white); padding: 100px 80px; }
+  .missions-header { margin-bottom: 64px; }
+  .missions-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; }
+  .mission-item { background: var(--white); padding: 48px 40px; transition: box-shadow 0.2s; position: relative; overflow: hidden; }
+  .mission-item:hover { box-shadow: 0 4px 24px rgba(33,38,78,0.08); }
+  .mission-item::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--rouge); transform: scaleX(0); transform-origin: left; transition: transform 0.3s; }
+  .mission-item:hover::before { transform: scaleX(1); }
+  .mission-num { font-family: 'Barlow Condensed', sans-serif; font-size: 72px; font-weight: 800; color: var(--bleu); opacity: 0.07; line-height: 1; margin-bottom: 16px; display: block; letter-spacing: -3px; }
+  .mission-title { font-family: 'Barlow Condensed', sans-serif; font-size: 26px; font-weight: 700; color: var(--bleu); text-transform: uppercase; margin-bottom: 16px; line-height: 1.15; }
+  .mission-title em { font-style: normal; color: var(--rouge); }
+  .mission-body { font-size: 14px; font-weight: 300; line-height: 1.8; color: var(--text-muted); }
+
+  /* ORGANISATION */
+  .organisation { background: var(--white); padding: 100px 80px; }
+  .org-block { margin-top: 56px; }
+  .org-block-label { font-family: 'Barlow Condensed', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; color: var(--rouge); margin-bottom: 24px; display: flex; align-items: center; gap: 16px; }
+  .org-block-label::after { content: ''; flex: 1; height: 1px; background: var(--light-gray); }
+  .org-photo-full { width: 100%; display: block; border-radius: 2px; margin-bottom: 64px; }
+  .secretariat-wrapper { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; }
+  .secretariat-photo { overflow: hidden; }
+  .secretariat-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .secretariat-info { background: var(--off-white); padding: 48px; display: flex; flex-direction: column; justify-content: center; }
+  .secretariat-info p { font-size: 16px; font-weight: 300; line-height: 1.85; color: var(--text-muted); margin-bottom: 24px; }
+  .secretariat-info strong { font-weight: 600; color: var(--bleu); }
+  .secretariat-contacts { display: flex; flex-direction: column; gap: 8px; font-size: 14px; font-weight: 300; color: var(--text-muted); }
+  .secretariat-contacts a { color: var(--bleu-light); text-decoration: none; }
+
+  /* GROUPES DE TRAVAIL */
+  .gt-section { background: var(--bleu); display: grid; grid-template-columns: 1fr 1fr; min-height: 520px; overflow: hidden; }
+  .gt-visual { position: relative; overflow: hidden; }
+  .gt-visual-img { position: absolute; inset: 0; background: url('header_1.png') center/cover no-repeat; }
+  .gt-visual-overlay { position: absolute; inset: 0; background: linear-gradient(to right, transparent 70%, rgba(33,38,78,0.4)); }
+  .gt-content { padding: 80px 72px; display: flex; flex-direction: column; justify-content: center; }
+  .gt-content .section-label { color: var(--bleu-light); }
+  .gt-content .section-label::before { background: var(--bleu-light); }
+  .gt-title { font-family: 'Barlow Condensed', sans-serif; font-size: clamp(36px, 3.5vw, 52px); font-weight: 700; line-height: 1.05; color: var(--white); letter-spacing: -0.5px; margin-bottom: 24px; }
+  .gt-body { font-size: 15px; font-weight: 300; line-height: 1.85; color: rgba(255,255,255,0.7); margin-bottom: 36px; }
+  .gt-tags { display: flex; flex-wrap: wrap; gap: 10px; }
+  .gt-tag { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color: rgba(255,255,255,0.8); padding: 8px 16px; font-size: 12px; font-weight: 400; letter-spacing: 0.5px; border-radius: 1px; transition: background 0.2s, border-color 0.2s; cursor: default; }
+  .gt-tag:hover { background: rgba(179,27,52,0.35); border-color: rgba(179,27,52,0.6); color: var(--white); }
+
+  /* STATUTS */
+  .statuts { background: #C6E5E4; padding: 80px; display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 80px; }
+  .statuts .section-label { color: var(--bleu); }
+  .statuts .section-label::before { background: var(--bleu); }
+  .statuts .section-title { color: var(--bleu); margin-bottom: 16px; }
+  .statuts-body { font-size: 16px; font-weight: 300; line-height: 1.7; color: rgba(33,38,78,0.65); }
+  .btn-download { display: inline-flex; align-items: center; gap: 12px; background: var(--rouge); color: var(--white); padding: 16px 36px; text-decoration: none; font-size: 14px; font-weight: 500; letter-spacing: 0.5px; border-radius: 2px; transition: background 0.2s, transform 0.15s; white-space: nowrap; }
+  .btn-download:hover { background: var(--rouge-dark); transform: translateY(-1px); }
+  .btn-download svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; flex-shrink: 0; }
+
+  /* FOOTER */
+  footer { background: #23254d; padding: 72px 80px 40px; }
+  .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 60px; margin-bottom: 64px; }
+  .footer-tagline { font-size: 13px; font-weight: 300; line-height: 1.7; color: rgba(255,255,255,0.45); margin-top: 20px; max-width: 260px; }
+  .footer-col-title { font-size: 10px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.45); margin-bottom: 20px; }
+  .footer-links { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  .footer-links a { color: rgba(255,255,255,0.6); text-decoration: none; font-size: 14px; font-weight: 300; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--white); }
+  .footer-bottom { border-top: 1px solid rgba(255,255,255,0.1); padding-top: 28px; display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: rgba(255,255,255,0.3); }
+  .footer-social { display: flex; gap: 20px; }
+  .footer-social a { color: rgba(255,255,255,0.35); text-decoration: none; font-size: 12px; letter-spacing: 1px; text-transform: uppercase; transition: color 0.2s; }
+  .footer-social a:hover { color: var(--white); }
+
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  .page-hero-eyebrow { animation: fadeUp 0.5s 0.1s both; }
+  .page-hero-title   { animation: fadeUp 0.5s 0.25s both; }
+  .page-hero-desc    { animation: fadeUp 0.5s 0.4s both; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="nav-logo">
+    <img src="roam_logo_red.png" alt="ROAM" style="height:52px;width:auto;display:block;border-radius:3px;">
+  </a>
+  <ul class="nav-links">
+    <li class="has-dropdown">
+      <a href="#">Qui sommes-nous</a>
+      <ul class="nav-dropdown">
+        <li><a href="roam-association.html">L'association</a></li>
+        <li><a href="#">Nos engagements</a></li>
+        <li><a href="#">Mutuelles &amp; Assurance</a></li>
+        <li><a href="#">Presse</a></li>
+      </ul>
+    </li>
+    <li class="has-dropdown">
+      <a href="#">Nos actions</a>
+      <ul class="nav-dropdown">
+        <li><a href="#">Nos groupes de travail</a></li>
+        <li><a href="#">Nos événements</a></li>
+        <li><a href="#">Nos partenariats</a></li>
+        <li><a href="#">FAQ CSRD</a></li>
+        <li><a href="#">FAQ DORA</a></li>
+        <li><a href="#">ROAM Academy</a></li>
+      </ul>
+    </li>
+    <li class="has-dropdown">
+      <a href="#">Nos adhérents</a>
+      <ul class="nav-dropdown">
+        <li><a href="#">Nos adhérents</a></li>
+        <li><a href="#">Devenir membre</a></li>
+      </ul>
+    </li>
+    <li><a href="#">Actualités</a></li>
+    <li><a href="#">Agenda</a></li>
+    <li><a href="#" class="nav-cta">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- PAGE HERO -->
+<div class="page-hero">
+  <div class="page-hero-content">
+    <p class="page-hero-eyebrow">Depuis 1855</p>
+    <h1 class="page-hero-title"><em>L'association</em><br>ROAM</h1>
+    <p class="page-hero-desc">Une association professionnelle inter-codes qui réunit et accompagne les assureurs à taille humaine en France, animés par des valeurs mutualistes communes.</p>
+  </div>
+  <div class="page-hero-visual">
+    <div class="page-hero-img"></div>
+  </div>
+  <div class="breadcrumb">
+    <a href="index.html">Accueil</a>
+    <span>›</span>
+    <strong>L'association</strong>
+  </div>
+</div>
+
+<!-- INTRO + CHIFFRES -->
+<div class="intro-stats">
+  <div class="intro-text">
+    <p class="section-label">Présentation</p>
+    <h2 class="section-title">Qui sommes-nous ?</h2>
+    <p class="intro-body"><strong>ROAM est une association professionnelle inter-codes fondée en 1855.</strong></p>
+    <p class="intro-body">Elle réunit 84 adhérents, des assureurs à taille humaine en France, qui partagent des problématiques opérationnelles communes. ROAM représente plus de 10 % du marché français de l'assurance et 11 % des salariés du secteur.</p>
+    <p class="intro-body">Au travers de groupes de travail et d'ateliers dédiés, les membres partagent leurs expériences et mutualisent les ressources pour se préparer aux transformations réglementaires, environnementales et technologiques.</p>
+    <p class="intro-body">Ancrés dans leurs territoires ou proches de leurs communautés professionnelles, les membres de ROAM se reconnaissent dans les valeurs mutualistes : <strong>solidarité, proximité et responsabilité.</strong></p>
+  </div>
+  <div class="intro-chiffres">
+    <div class="chiffre-item">
+      <div class="chiffre-num">84</div>
+      <div class="chiffre-label"><strong>Adhérents</strong>Sociétés d'Assurance Mutuelle, institutions de prévoyance et mutuelles santé</div>
+    </div>
+    <div class="chiffre-item">
+      <div class="chiffre-num">18 Mds</div>
+      <div class="chiffre-label"><strong>De chiffre d'affaires</strong>Réalisé par les adhérents ROAM en 2023</div>
+    </div>
+    <div class="chiffre-item">
+      <div class="chiffre-num">10%</div>
+      <div class="chiffre-label"><strong>Du marché français</strong>De l'assurance représentés par les membres ROAM</div>
+    </div>
+    <div class="chiffre-item">
+      <div class="chiffre-num">170+</div>
+      <div class="chiffre-label"><strong>Ans d'histoire</strong>Une association historique, fondée en 1855</div>
+    </div>
+  </div>
+</div>
+
+<!-- NOTRE MARCHÉ -->
+<div class="marche">
+  <div class="marche-card">
+    <div class="marche-pct">8%</div>
+    <div class="marche-title">Du marché de l'assurance</div>
+    <div class="marche-body">Nos adhérents représentent 8 % du marché de l'assurance française, avec une présence forte sur des segments spécialisés. Source : France Assureurs 2024.</div>
+  </div>
+  <div class="marche-card">
+    <div class="marche-pct">40%</div>
+    <div class="marche-title">En assurance construction</div>
+    <div class="marche-body">Les membres ROAM représentent 40 % du marché de l'assurance construction en France, un secteur stratégique et historiquement fort pour notre collectif.</div>
+  </div>
+  <div class="marche-card">
+    <div class="marche-pct">70%</div>
+    <div class="marche-title">En RC Médicale</div>
+    <div class="marche-body">ROAM fédère 70 % des acteurs de la Responsabilité Civile Médicale, positionnant l'association comme un acteur incontournable de cette spécialité.</div>
+  </div>
+</div>
+
+<!-- TICKER -->
+<div class="valeurs-strip">
+  <div class="valeurs-ticker">
+    <span class="valeur-item">Solidarité</span><span class="valeur-item">Proximité</span><span class="valeur-item">Responsabilité</span><span class="valeur-item">Le Collectif</span><span class="valeur-item">Le Partage</span><span class="valeur-item">L'Action</span><span class="valeur-item">L'Humain</span><span class="valeur-item">Solidarité</span><span class="valeur-item">Proximité</span><span class="valeur-item">Responsabilité</span><span class="valeur-item">Le Collectif</span><span class="valeur-item">Le Partage</span><span class="valeur-item">L'Action</span><span class="valeur-item">L'Humain</span>
+  </div>
+</div>
+
+<!-- MISSIONS (3) -->
+<section class="missions">
+  <div class="missions-header">
+    <p class="section-label">Nos missions</p>
+    <h2 class="section-title">Ce que nous faisons<br>pour nos adhérents</h2>
+  </div>
+  <div class="missions-grid">
+    <div class="mission-item">
+      <span class="mission-num">01</span>
+      <h3 class="mission-title">Rassembler<br>&amp; <em>Partager</em></h3>
+      <p class="mission-body">ROAM crée des espaces d'échange entre pairs et favorise la mutualisation des ressources. Lors des réunions de ses groupes de travail, les adhérents abordent ensemble des sujets variés : droit, fiscalité, comptabilité, réassurance, ressources humaines. Une veille juridique permanente permet de répondre à toutes les questions techniques et réglementaires.</p>
+    </div>
+    <div class="mission-item">
+      <span class="mission-num">02</span>
+      <h3 class="mission-title">Former<br>&amp; <em>Informer</em></h3>
+      <p class="mission-body">ROAM étudie et diffuse toutes les informations relatives aux activités de ses adhérents, notamment les projets de réglementation au niveau national ou européen. L'association travaille en étroite collaboration avec France Assureurs, AAM, FNMF, CTIP et organise des formations via la ROAM Academy.</p>
+    </div>
+    <div class="mission-item">
+      <span class="mission-num">03</span>
+      <h3 class="mission-title">Défendre<br>&amp; <em>Faire entendre</em></h3>
+      <p class="mission-body">ROAM défend les intérêts de ses adhérents et promeut les valeurs mutualistes au niveau national et européen, en s'appuyant sur son lien historique avec l'Association des assureurs mutualistes (AAM). Agile et pragmatique, l'association porte toujours la voix de ses membres dans le débat public.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ORGANISATION -->
+<section class="organisation">
+  <p class="section-label">Notre organisation</p>
+  <h2 class="section-title">Gouvernance &amp;<br>équipe permanente</h2>
+
+  <div class="org-block">
+    <p class="org-block-label">Le Bureau</p>
+    <div class="secretariat-wrapper">
+      <div class="secretariat-photo">
+        <a href="bureau.png" target="_blank" title="Cliquer pour agrandir">
+          <img src="bureau.png" alt="Le Bureau ROAM" style="width:100%;height:100%;object-fit:cover;display:block;cursor:zoom-in;">
+        </a>
+      </div>
+      <div class="secretariat-info">
+        <p>La <strong>Commission exécutive</strong> est élargie à tous les membres de ROAM, qui participent à l'élection des membres du Bureau. Ce Bureau est composé du <strong>Président</strong>, d'un <strong>1er Vice-Président</strong>, d'un <strong>Trésorier</strong> et de <strong>Vice-Présidents</strong>.</p>
+        <p style="margin-top:16px;"><strong>Vincent Malandain</strong> est élu Président de ROAM depuis le 1er janvier 2026, à la tête de la Mutuelle des Architectes Français (MAF). Il est accompagné de <strong>Dominique Godet</strong> (1er Vice-Président, Relyens) et de <strong>Stéphane Vilain</strong> (Trésorier, CMMA).</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="org-block">
+    <p class="org-block-label">Le Secrétariat général</p>
+    <div class="secretariat-wrapper">
+      <div class="secretariat-photo">
+        <img src="secretariat.png" alt="Secrétariat général ROAM" style="width:100%;height:100%;object-fit:cover;display:block;">
+      </div>
+      <div class="secretariat-info">
+        <p>ROAM dispose d'un Secrétariat général permanent composé de <strong>3 personnes</strong> qui gèrent au quotidien l'association : <strong>Sébastien Acedo</strong> (Délégué général, depuis le 1er février 2024), <strong>Fanny Dupas</strong> (Responsable Communication, Marketing &amp; Innovation) et <strong>Shanelle Marce</strong> (Cheffe de projet).</p>
+        <div class="secretariat-contacts">
+          <span>✉ <a href="mailto:sebastien.acedo@roam.asso.fr">sebastien.acedo@roam.asso.fr</a> — +33 6 75 18 95 69</span>
+          <span>✉ <a href="mailto:dupas.fanny@roam.asso.fr">dupas.fanny@roam.asso.fr</a> — +33 6 23 49 39 52</span>
+          <span>✉ <a href="mailto:shanelle.marce@roam.asso.fr">shanelle.marce@roam.asso.fr</a> — +33 6 01 38 21 57</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- GROUPES DE TRAVAIL -->
+<div class="gt-section">
+  <div class="gt-visual">
+    <div class="gt-visual-img"></div>
+    <div class="gt-visual-overlay"></div>
+  </div>
+  <div class="gt-content">
+    <p class="section-label">Travaux &amp; événements</p>
+    <h2 class="gt-title">9 groupes de travail<br>au service des membres</h2>
+    <p class="gt-body">ROAM anime 9 groupes de travail thématiques qui se réunissent régulièrement pour partager les expériences, mutualiser les ressources et co-construire des réponses aux défis opérationnels, réglementaires et technologiques du secteur. L'association organise également des événements professionnels et noue des partenariats stratégiques avec des acteurs clés de l'assurance.</p>
+    <div class="gt-tags">
+      <span class="gt-tag">Communication</span>
+      <span class="gt-tag">Informatique &amp; Numérique</span>
+      <span class="gt-tag">RSE</span>
+      <span class="gt-tag">Distribution</span>
+      <span class="gt-tag">Vie mutualiste</span>
+      <span class="gt-tag">Juridique</span>
+      <span class="gt-tag">Comptabilité</span>
+      <span class="gt-tag">Réassurance</span>
+      <span class="gt-tag">Ressources Humaines</span>
+    </div>
+  </div>
+</div>
+
+<!-- STATUTS -->
+<section class="statuts">
+  <div>
+    <p class="section-label">Documents officiels</p>
+    <h2 class="section-title">Nos statuts &amp;<br>règlement intérieur</h2>
+    <p class="statuts-body">Consultez ici les statuts ainsi que le règlement intérieur de notre association. Ces documents fondateurs régissent le fonctionnement de ROAM depuis sa création en 1855.</p>
+  </div>
+  <a href="https://www.roam.asso.fr/wp-content/uploads/2023/12/ROAM_Statuts-et-Reglement-interieur-15062023.pdf" target="_blank" class="btn-download">
+    <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+    Télécharger nos statuts
+  </a>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div>
+      <img src="roam_logo_blue.png" alt="ROAM" style="height:44px;width:auto;display:block;border-radius:3px;">
+      <p class="footer-tagline">ROAM, les assureurs à taille humaine en France — depuis 1855.</p>
+      <div style="margin-top:28px; display:flex; gap:16px;">
+        <a href="#" style="display:inline-block; background:var(--rouge); color:#fff; padding:8px 18px; text-decoration:none; font-size:12px; letter-spacing:1px; text-transform:uppercase; font-weight:500; border-radius:1px;">LinkedIn</a>
+        <a href="#" style="display:inline-block; border:1px solid rgba(255,255,255,0.2); color:rgba(255,255,255,0.6); padding:8px 18px; text-decoration:none; font-size:12px; letter-spacing:1px; text-transform:uppercase; font-weight:400; border-radius:1px;">Presse</a>
+      </div>
+    </div>
+    <div>
+      <p class="footer-col-title">Association</p>
+      <ul class="footer-links">
+        <li><a href="roam-association.html">L'association</a></li>
+        <li><a href="#">Nos engagements</a></li>
+        <li><a href="#">Mutuelles &amp; Assurance</a></li>
+        <li><a href="#">Presse</a></li>
+      </ul>
+    </div>
+    <div>
+      <p class="footer-col-title">Actions</p>
+      <ul class="footer-links">
+        <li><a href="#">Groupes de travail</a></li>
+        <li><a href="#">Nos événements</a></li>
+        <li><a href="#">Partenariats</a></li>
+        <li><a href="#">ROAM Academy</a></li>
+      </ul>
+    </div>
+    <div>
+      <p class="footer-col-title">Membres</p>
+      <ul class="footer-links">
+        <li><a href="#">Nos adhérents</a></li>
+        <li><a href="#">Devenir membre</a></li>
+        <li><a href="#">Actualités</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 ROAM — Tous droits réservés</span>
+    <div class="footer-social">
+      <a href="#">Mentions légales</a>
+      <a href="#">Politique de confidentialité</a>
+      <a href="#">RGPD</a>
+    </div>
+  </div>
+</footer>
+</body>
+</html>
